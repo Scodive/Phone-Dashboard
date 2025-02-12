@@ -58,6 +58,25 @@
             font-size: 14px;
             color: #666;
         }
+
+        .weather-main {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .weather-main img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        .weather-details {
+            font-size: 14px;
+            color: #666;
+            display: grid;
+            gap: 4px;
+        }
     </style>
 </head>
 <body>
@@ -69,7 +88,15 @@
         <div>
             <div class="title">天气</div>
             <div class="content" id="weather">
-                <span id="temp">--°C</span>
+                <div class="weather-main">
+                    <img id="weather-icon" src="" alt="天气图标">
+                    <span id="temp">--°C</span>
+                </div>
+                <div class="weather-details">
+                    <div>体感温度: <span id="feels-like">--°C</span></div>
+                    <div>湿度: <span id="humidity">--%</span></div>
+                    <div>天气: <span id="weather-desc">--</span></div>
+                </div>
             </div>
         </div>
     </div>
@@ -105,17 +132,42 @@
         // 获取天气信息
         async function getWeather() {
             try {
-                // 这里使用的是 OpenWeatherMap API，你需要注册一个免费的 API key
-                const API_KEY = '94f5e41503d49a430073eb1636cff98b';
-                const city = 'Shenzhen'; // 可以改成你想要的城市
-                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`);
+                const API_KEY = '你的API密钥';
+                const lat = 22.53291;
+                const lon = 113.93029;
+                const response = await fetch(
+                    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
+                );
                 const data = await response.json();
-                document.getElementById('temp').textContent = `${Math.round(data.main.temp)}°C`;
+                
+                // 更新温度
+                document.getElementById('temp').textContent = 
+                    `${Math.round(data.main.temp)}°C`;
+                
+                // 更新体感温度
+                document.getElementById('feels-like').textContent = 
+                    `${Math.round(data.main.feels_like)}°C`;
+                
+                // 更新湿度
+                document.getElementById('humidity').textContent = 
+                    `${data.main.humidity}%`;
+                
+                // 更新天气描述
+                document.getElementById('weather-desc').textContent = 
+                    data.weather[0].description;
+                
+                // 更新天气图标
+                const iconCode = data.weather[0].icon;
+                const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+                document.getElementById('weather-icon').src = iconUrl;
             } catch (error) {
                 console.error('获取天气信息失败:', error);
             }
         }
+
+        // 每30分钟更新一次天气
         getWeather();
+        setInterval(getWeather, 30 * 60 * 1000);
 
         // 获取B站视频播放量
         async function getBiliPlayCount() {

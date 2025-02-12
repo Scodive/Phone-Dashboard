@@ -102,7 +102,7 @@
         async function getBiliPlayCount() {
             try {
                 // 这里需要替换成实际的B站视频 BV 号
-                const bvid = '你的视频BV号';
+                const bvid = 'BV1TpNNewE4W';
                 const response = await fetch(`https://api.bilibili.com/x/web-interface/view?bvid=${bvid}`);
                 const data = await response.json();
                 document.getElementById('biliCount').textContent = data.data.view;

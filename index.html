@@ -16,15 +16,15 @@
 
         .grid-container {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 16px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 12px;
         }
 
         .card {
             background: white;
             border-radius: 16px;
-            padding: 20px;
+            padding: 16px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
@@ -40,10 +40,9 @@
         }
 
         .time {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: bold;
             color: #57068c;
-            margin: 0;
         }
 
         .weather-main {
@@ -53,17 +52,17 @@
         }
 
         .temp {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: bold;
             color: #57068c;
         }
 
         .weather-details {
-            margin-top: 12px;
-            font-size: 14px;
+            margin-top: 8px;
+            font-size: 13px;
             color: #666;
             display: grid;
-            gap: 4px;
+            gap: 2px;
         }
 
         .stats-container {
@@ -89,13 +88,13 @@
         }
 
         .stock-change.up {
-            background: #f0fff4;
-            color: #38a169;
+            background: #fff1f0;
+            color: #f5222d;
         }
 
         .stock-change.down {
-            background: #fff5f5;
-            color: #e53e3e;
+            background: #f6ffed;
+            color: #52c41a;
         }
 
         .bili-title {
@@ -110,6 +109,40 @@
             gap: 16px;
             color: #666;
             font-size: 14px;
+        }
+
+        .social-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .social-item {
+            flex: 1;
+        }
+
+        .platform-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .bili-stats, .douyin-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .bili-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     </style>
 </head>
@@ -130,8 +163,7 @@
             </div>
             <div class="weather-details">
                 <div>体感温度: <span id="feels-like">20°C</span></div>
-                <div>湿度: <span id="humidity">66%</span></div>
-                <div>天气: <span id="weather-desc">晴朗</span></div>
+                <div>湿度: <span id="humidity">63%</span></div>
             </div>
         </div>
 
@@ -153,11 +185,26 @@
 
         <!-- B站视频卡片 -->
         <div class="card full-width">
-            <div class="title">B站视频信息</div>
-            <div class="bili-title" id="videoTitle">亚洲最美海景校园</div>
-            <div class="bili-stats">
-                <span id="viewCount">播放: 24609</span>
-                <span id="likeCount">点赞: 681</span>
+            <div class="title">社交媒体数据</div>
+            <div class="social-container">
+                <!-- B站数据 -->
+                <div class="social-item">
+                    <div class="platform-title">B站视频</div>
+                    <div class="bili-title" id="videoTitle">亚洲最美海景校园</div>
+                    <div class="bili-stats">
+                        <span id="viewCount">播放: 24609</span>
+                        <span id="likeCount">点赞: 681</span>
+                        <span id="replyCount">评论: 0</span>
+                    </div>
+                </div>
+                <!-- 抖音数据 -->
+                <div class="social-item">
+                    <div class="platform-title">抖音</div>
+                    <div class="douyin-stats">
+                        <div>获赞: <span id="douyinLikes">--</span></div>
+                        <div>粉丝: <span id="douyinFollowers">--</span></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -180,8 +227,12 @@
                 const data = await response.json();
                 
                 document.getElementById('videoTitle').textContent = data.title;
-                document.getElementById('viewCount').textContent = `播放: ${data.view}`;
-                document.getElementById('likeCount').textContent = `点赞: ${data.like}`;
+                document.getElementById('viewCount').textContent = 
+                    `播放: ${formatNumber(data.view)}`;
+                document.getElementById('likeCount').textContent = 
+                    `点赞: ${formatNumber(data.like)}`;
+                document.getElementById('replyCount').textContent = 
+                    `评论: ${formatNumber(data.reply)}`;
             } catch (error) {
                 console.error('获取视频信息失败:', error);
             }
@@ -213,10 +264,6 @@
                 // 更新湿度
                 document.getElementById('humidity').textContent = 
                     `${data.main.humidity}%`;
-                
-                // 更新天气描述
-                document.getElementById('weather-desc').textContent = 
-                    data.weather[0].description;
                 
                 // 更新天气图标
                 const iconCode = data.weather[0].icon;
@@ -260,6 +307,33 @@
 
         // 设置30秒更新一次
         setInterval(updateStockPrice, 30 * 1000);
+
+        // 添加抖音数据更新函数
+        async function updateDouyinStats() {
+            try {
+                const response = await fetch('/api/douyin');
+                const data = await response.json();
+                
+                document.getElementById('douyinLikes').textContent = 
+                    formatNumber(data.likes);
+                document.getElementById('douyinFollowers').textContent = 
+                    formatNumber(data.followers);
+            } catch (error) {
+                console.error('获取抖音数据失败:', error);
+            }
+        }
+
+        // 格式化数字函数（将大数字转换为 1.2w 这样的格式）
+        function formatNumber(num) {
+            if (num >= 10000) {
+                return (num / 10000).toFixed(1) + 'w';
+            }
+            return num.toString();
+        }
+
+        // 设置定时更新
+        updateDouyinStats();
+        setInterval(updateDouyinStats, 60 * 1000); // 每分钟更新一次抖音数据
     </script>
 </body>
 </html> 

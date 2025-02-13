@@ -12,7 +12,8 @@ export default async function handler(req, res) {
     res.status(200).json({
       title: data.data.title,
       view: data.data.stat.view,
-      like: data.data.stat.like
+      like: data.data.stat.like,
+      reply: data.data.stat.reply
     });
   } catch (error) {
     res.status(500).json({ error: '获取数据失败' });

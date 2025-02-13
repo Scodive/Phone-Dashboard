@@ -303,21 +303,54 @@
             gap: 24px;
         }
 
-        .bili-section, .bus-section {
+        .bili-section {
             flex: 1;
+        }
+
+        .bili-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;  /* 左对齐 */
+            gap: 8px;
+        }
+
+        .bili-title {
+            font-size: 14px;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;  /* 确保标题占满宽度 */
+        }
+
+        .bili-numbers {
+            display: flex;
+            gap: 16px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .bus-section {
+            flex: 1.2;  /* 给校巴部分多一点空间 */
         }
 
         .bus-times {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
+        }
+
+        .bus-row {
+            display: flex;
+            gap: 12px;
         }
 
         .bus-item {
+            flex: 1;
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 8px;
+            justify-content: space-between;
+            padding: 8px 12px;
             border-radius: 6px;
             background: var(--card-bg);
         }
@@ -327,6 +360,16 @@
             padding: 2px 6px;
             border-radius: 4px;
             white-space: nowrap;
+        }
+
+        .bus-time {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .time-info {
+            font-size: 13px;
+            color: var(--text-secondary);
         }
 
         .past .bus-status {
@@ -339,11 +382,6 @@
             color: #1890ff;
         }
 
-        .future .bus-status {
-            background: #f6ffed;
-            color: #52c41a;
-        }
-
         [data-theme="dark"] .past .bus-status {
             background: #262626;
             color: #999;
@@ -352,16 +390,6 @@
         [data-theme="dark"] .next .bus-status {
             background: #111d2c;
             color: #40a9ff;
-        }
-
-        [data-theme="dark"] .future .bus-status {
-            background: #162312;
-            color: #73d13d;
-        }
-
-        #lastBusTime, #nextBusTime, #futureBusTime {
-            color: var(--text-secondary);
-            font-size: 13px;
         }
     </style>
 </head>
@@ -423,8 +451,8 @@
                 <!-- B站信息 -->
                 <div class="bili-section">
                     <div class="title">B站数据</div>
-                    <div class="bili-stats">
-                        <span class="bili-title" id="videoTitle">亚洲最美海景校园</span>
+                    <div class="bili-content">
+                        <div class="bili-title" id="videoTitle">亚洲最美海景校园</div>
                         <div class="bili-numbers">
                             <span id="viewCount">播放: 24609</span>
                             <span id="likeCount">点赞: 681</span>
@@ -436,20 +464,29 @@
                 <div class="bus-section">
                     <div class="title">校巴时刻</div>
                     <div class="bus-times">
-                        <div class="bus-item past">
-                            <span class="bus-status">已发车</span>
-                            <span id="lastBus">07:30</span>
-                            <span id="lastBusTime">10分钟前</span>
+                        <div class="bus-row">
+                            <div class="bus-item past">
+                                <span class="bus-status">已发车</span>
+                                <span id="lastBus1" class="bus-time">07:30</span>
+                                <span id="lastBusTime1" class="time-info">10分钟前</span>
+                            </div>
+                            <div class="bus-item past">
+                                <span class="bus-status">已发车</span>
+                                <span id="lastBus2" class="bus-time">07:45</span>
+                                <span id="lastBusTime2" class="time-info">5分钟前</span>
+                            </div>
                         </div>
-                        <div class="bus-item next">
-                            <span class="bus-status">下一班</span>
-                            <span id="nextBus">07:45</span>
-                            <span id="nextBusTime">还有5分钟</span>
-                        </div>
-                        <div class="bus-item future">
-                            <span class="bus-status">后一班</span>
-                            <span id="futureBus">08:00</span>
-                            <span id="futureBusTime">还有20分钟</span>
+                        <div class="bus-row">
+                            <div class="bus-item next">
+                                <span class="bus-status">即将发车</span>
+                                <span id="nextBus1" class="bus-time">08:00</span>
+                                <span id="nextBusTime1" class="time-info">还有10分钟</span>
+                            </div>
+                            <div class="bus-item next">
+                                <span class="bus-status">即将发车</span>
+                                <span id="nextBus2" class="bus-time">08:15</span>
+                                <span id="nextBusTime2" class="time-info">还有25分钟</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -643,6 +680,7 @@
         function updateBusInfo() {
             const now = new Date();
             const currentTime = now.getHours() * 60 + now.getMinutes();
+            const today = now.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' });
             
             // 转换时间字符串为分钟数
             const timeToMinutes = (timeStr) => {
@@ -651,44 +689,52 @@
             };
 
             // 找到相关班次
-            let lastBus = null;
-            let nextBus = null;
-            let futureBus = null;
+            let pastBuses = [];
+            let nextBuses = [];
 
             for (let i = 0; i < busSchedule.length; i++) {
                 const busTime = timeToMinutes(busSchedule[i]);
                 if (busTime <= currentTime) {
-                    lastBus = busSchedule[i];
+                    pastBuses.push({
+                        time: busSchedule[i],
+                        diff: currentTime - busTime
+                    });
                 } else {
-                    nextBus = busSchedule[i];
-                    futureBus = busSchedule[i + 1];
-                    break;
+                    nextBuses.push({
+                        time: busSchedule[i],
+                        diff: busTime - currentTime
+                    });
                 }
             }
 
-            // 更新显示
-            if (lastBus) {
-                const lastBusMinutes = currentTime - timeToMinutes(lastBus);
-                document.getElementById('lastBus').textContent = lastBus;
-                document.getElementById('lastBusTime').textContent = `${lastBusMinutes}分钟前`;
-            }
+            // 获取最近的两班已发车和两班待发车
+            pastBuses = pastBuses.slice(-2);
+            nextBuses = nextBuses.slice(0, 2);
 
-            if (nextBus) {
-                const nextBusMinutes = timeToMinutes(nextBus) - currentTime;
-                document.getElementById('nextBus').textContent = nextBus;
-                document.getElementById('nextBusTime').textContent = `还有${nextBusMinutes}分钟`;
-            }
+            // 更新已发车信息
+            pastBuses.forEach((bus, index) => {
+                const timeElement = document.getElementById(`lastBus${index + 1}`);
+                const diffElement = document.getElementById(`lastBusTime${index + 1}`);
+                if (timeElement && diffElement) {
+                    timeElement.textContent = `${today} ${bus.time}`;
+                    diffElement.textContent = `${bus.diff}分钟前`;
+                }
+            });
 
-            if (futureBus) {
-                const futureBusMinutes = timeToMinutes(futureBus) - currentTime;
-                document.getElementById('futureBus').textContent = futureBus;
-                document.getElementById('futureBusTime').textContent = `还有${futureBusMinutes}分钟`;
-            }
+            // 更新待发车信息
+            nextBuses.forEach((bus, index) => {
+                const timeElement = document.getElementById(`nextBus${index + 1}`);
+                const diffElement = document.getElementById(`nextBusTime${index + 1}`);
+                if (timeElement && diffElement) {
+                    timeElement.textContent = `${today} ${bus.time}`;
+                    diffElement.textContent = `还有${bus.diff}分钟`;
+                }
+            });
         }
 
-        // 每分钟更新一次校巴信息
+        // 初始更新并设置30秒刷新
         updateBusInfo();
-        setInterval(updateBusInfo, 60 * 1000);
+        setInterval(updateBusInfo, 30 * 1000);
     </script>
 </body>
 </html> 

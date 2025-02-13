@@ -425,7 +425,7 @@
                 <div class="temp" id="temp">20°C</div>
             </div>
             <div class="weather-details">
-                <div>体感: <span id="feels-like">20°C</span></div>
+                <div>体感: <span id="feels-like">xx°C</span></div>
                 <div>湿度: <span id="humidity">63%</span></div>
             </div>
         </div>
@@ -448,7 +448,7 @@
                 </div>
                 <div class="stock">
                     <div class="title">上证指数</div>
-                    <span class="stock-price" id="stockPrice">3,000.00</span>
+                    <span class="stock-price" id="stockPrice">xxxx.00</span>
                     <span class="stock-change up" id="stockChange">+1.2%</span>
                 </div>
             </div>
@@ -464,8 +464,8 @@
                         <div class="bili-title" id="videoTitle">亚洲最美海景校园</div>
                         <div class="bili-numbers">
                             <span id="viewCount">播放: xxxxx</span>
-                            <span id="likeCount">点赞: xx1</span>
-                            <span id="replyCount">评论: 88</span>
+                            <span id="likeCount">点赞: xxx</span>
+                            <span id="replyCount">评论: xx</span>
                         </div>
                     </div>
                 </div>
@@ -489,12 +489,12 @@
                             <div class="bus-item next">
                                 <span class="bus-status">即将发车</span>
                                 <span id="nextBus1" class="bus-time">08:00</span>
-                                <span id="nextBusTime1" class="time-info">还有10分钟</span>
+                                <span id="nextBusTime1" class="time-info">10分钟</span>
                             </div>
                             <div class="bus-item next">
                                 <span class="bus-status">即将发车</span>
                                 <span id="nextBus2" class="bus-time">08:15</span>
-                                <span id="nextBusTime2" class="time-info">还有25分钟</span>
+                                <span id="nextBusTime2" class="time-info">xx分钟</span>
                             </div>
                         </div>
                     </div>
@@ -504,99 +504,6 @@
     </div>
 
     <script>
-        // 导入时刻表
-        import { weekdaySchedule, weekendSchedule } from './api/busSchedule.js';
-
-        // 判断是否为周末
-        function isWeekend() {
-            const day = new Date().getDay();
-            return day === 0 || day === 6;  // 0是周日，6是周六
-        }
-
-        // 获取当前应该使用的时刻表
-        function getCurrentSchedule() {
-            return isWeekend() ? weekendSchedule : weekdaySchedule;
-        }
-
-        // 修改校巴信息更新函数
-        function updateBusInfo() {
-            const now = new Date();
-            const currentTime = now.getHours() * 60 + now.getMinutes();
-            const busSchedule = getCurrentSchedule();
-            
-            // 添加时间段提示
-            const scheduleType = isWeekend() ? '周末时刻' : '工作日时刻';
-            document.querySelector('.bus-section .title').textContent = 
-                `校巴时刻 (${scheduleType})`;
-            
-            // 转换时间字符串为分钟数
-            const timeToMinutes = (timeStr) => {
-                const [hours, minutes] = timeStr.split(':').map(Number);
-                return hours * 60 + minutes;
-            };
-
-            // 找到相关班次
-            let pastBuses = [];
-            let nextBuses = [];
-
-            for (let i = 0; i < busSchedule.length; i++) {
-                const busTime = timeToMinutes(busSchedule[i]);
-                if (busTime <= currentTime) {
-                    pastBuses.push({
-                        time: busSchedule[i],
-                        diff: currentTime - busTime
-                    });
-                } else {
-                    nextBuses.push({
-                        time: busSchedule[i],
-                        diff: busTime - currentTime
-                    });
-                }
-            }
-
-            // 获取最近的两班已发车和两班待发车
-            pastBuses = pastBuses.slice(-2);
-            nextBuses = nextBuses.slice(0, 2);
-
-            // 更新已发车信息
-            pastBuses.forEach((bus, index) => {
-                const timeElement = document.getElementById(`lastBus${index + 1}`);
-                const diffElement = document.getElementById(`lastBusTime${index + 1}`);
-                if (timeElement && diffElement) {
-                    timeElement.textContent = bus.time;
-                    diffElement.textContent = `${bus.diff}分钟前`;
-                }
-            });
-
-            // 更新待发车信息
-            nextBuses.forEach((bus, index) => {
-                const timeElement = document.getElementById(`nextBus${index + 1}`);
-                const diffElement = document.getElementById(`nextBusTime${index + 1}`);
-                if (timeElement && diffElement) {
-                    timeElement.textContent = bus.time;
-                    diffElement.textContent = `还有${bus.diff}分钟`;
-                }
-            });
-
-            // 处理没有班次的情况
-            if (pastBuses.length === 0) {
-                document.querySelectorAll('.bus-item.past').forEach(item => {
-                    item.querySelector('.bus-time').textContent = '--:--';
-                    item.querySelector('.time-info').textContent = '无班次';
-                });
-            }
-            if (nextBuses.length === 0) {
-                document.querySelectorAll('.bus-item.next').forEach(item => {
-                    item.querySelector('.bus-time').textContent = '--:--';
-                    item.querySelector('.time-info').textContent = '无班次';
-                });
-            }
-        }
-
-        // 初始更新并设置30秒刷新
-        updateBusInfo();
-        setInterval(updateBusInfo, 30 * 1000);
-
         // 更新时间和日期显示
         function updateDateTime() {
             const now = new Date();
@@ -644,7 +551,7 @@
         updateDateTime();
         setInterval(updateDateTime, 1000);  // 每秒更新时间
         getBiliPlayCount();  // 初始加载
-        setInterval(getBiliPlayCount, 60 * 1000);  // 每分钟更新B站数据
+        setInterval(getBiliPlayCount, 5 * 60 * 1000);  // 每分钟更新B站数据
 
         // 天气获取函数
         async function getWeather() {
@@ -770,6 +677,89 @@
 
         // 页面加载时检查是否需要自动切换
         autoThemeSwitch();
+
+        // 校巴时刻表数据
+        const busSchedule = [
+            "07:00", "07:05", "07:10", "07:15", "07:20", "07:25",
+            "07:30", "07:35", "07:40", "07:45", "07:50", "07:55",
+            "08:00", "08:05", "08:10", "08:15", "08:20", "08:25",
+            "08:30", "08:35", "08:40", "08:45", "08:50", "08:55",
+            "09:00", "09:05", "09:10", "09:15", "09:20", "09:25",
+            "09:30", "09:35", "09:40", "09:50", "10:00", "10:10", 
+            "10:20", "10:30", "10:40", "10:50", "11:00", "11:20",
+            "11:35", "11:45", "11:50", "12:00", "12:10", "12:20",
+            "12:30", "12:40", "12:50", "12:55", "13:00", "13:10",
+            "13:20", "13:30", "13:40", "13:50", "14:00", "14:10",
+            "14:20", "14:30", "14:40", "14:50", "15:00", "15:10",
+            "15:20", "15:30", "15:40", "15:50", "16:00", "16:10",
+            "16:20", "16:30", "16:40", "16:50", "17:00", "17:10",
+            "17:15", "17:25", "17:30", "17:35", "17:40", "17:45",
+            "17:50", "17:55", "18:00", "18:05", "18:10", "18:15",
+            "18:20", "18:30", "18:40", "18:50", "19:00", "19:10",
+            "19:20", "19:30", "19:40", "19:50", "20:00", "20:10",
+            "20:20", "20:30", "20:40", "20:50", "21:00", "21:10",
+            "21:20", "21:30", "21:40", "21:50", "22:00", "22:15",// ... 其他时间
+            "22:30", "22:45"
+        ];
+
+        // 修改校巴信息更新函数
+        function updateBusInfo() {
+            const now = new Date();
+            const currentTime = now.getHours() * 60 + now.getMinutes();
+            
+            // 转换时间字符串为分钟数
+            const timeToMinutes = (timeStr) => {
+                const [hours, minutes] = timeStr.split(':').map(Number);
+                return hours * 60 + minutes;
+            };
+
+            // 找到相关班次
+            let pastBuses = [];
+            let nextBuses = [];
+
+            for (let i = 0; i < busSchedule.length; i++) {
+                const busTime = timeToMinutes(busSchedule[i]);
+                if (busTime <= currentTime) {
+                    pastBuses.push({
+                        time: busSchedule[i],
+                        diff: currentTime - busTime
+                    });
+                } else {
+                    nextBuses.push({
+                        time: busSchedule[i],
+                        diff: busTime - currentTime
+                    });
+                }
+            }
+
+            // 获取最近的两班已发车和两班待发车
+            pastBuses = pastBuses.slice(-2);
+            nextBuses = nextBuses.slice(0, 2);
+
+            // 更新已发车信息
+            pastBuses.forEach((bus, index) => {
+                const timeElement = document.getElementById(`lastBus${index + 1}`);
+                const diffElement = document.getElementById(`lastBusTime${index + 1}`);
+                if (timeElement && diffElement) {
+                    timeElement.textContent = bus.time;  // 只显示时间
+                    diffElement.textContent = `${bus.diff}分钟前`;
+                }
+            });
+
+            // 更新待发车信息
+            nextBuses.forEach((bus, index) => {
+                const timeElement = document.getElementById(`nextBus${index + 1}`);
+                const diffElement = document.getElementById(`nextBusTime${index + 1}`);
+                if (timeElement && diffElement) {
+                    timeElement.textContent = bus.time;  // 只显示时间
+                    diffElement.textContent = `${bus.diff}分钟后`;
+                }
+            });
+        }
+
+        // 初始更新并设置30秒刷新
+        updateBusInfo();
+        setInterval(updateBusInfo, 30 * 1000);
     </script>
 </body>
 </html> 

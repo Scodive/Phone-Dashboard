@@ -343,7 +343,7 @@
         }
 
         .bus-section {
-            flex: 1.2;  /* 给校巴部分多一点空间 */
+            flex: 1.2;
         }
 
         .bus-times {
@@ -355,33 +355,38 @@
         .bus-row {
             display: flex;
             gap: 12px;
+            padding-left: 0;  /* 移除左边距 */
         }
 
         .bus-item {
             flex: 1;
             display: flex;
             align-items: center;
-            justify-content: space-between;
             padding: 8px 12px;
             border-radius: 6px;
             background: var(--card-bg);
+            margin-left: 0;  /* 移除左边距 */
         }
 
         .bus-status {
             font-size: 12px;
             padding: 2px 6px;
             border-radius: 4px;
-            white-space: nowrap;
+            min-width: 56px;  /* 固定状态标签宽度 */
+            text-align: center;
         }
 
         .bus-time {
             font-weight: 500;
             color: var(--text-primary);
+            margin-left: 8px;  /* 调整时间与状态的间距 */
+            min-width: 50px;  /* 固定时间宽度 */
         }
 
         .time-info {
             font-size: 13px;
             color: var(--text-secondary);
+            margin-left: auto;  /* 将时间信息推到右边 */
         }
 
         .past .bus-status {

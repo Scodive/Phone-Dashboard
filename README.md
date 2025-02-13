@@ -1,15 +1,15 @@
 # 旧手机数据看板 (Old Phone Dashboard)
 
+<img width="756" alt="image" src="https://github.com/user-attachments/assets/e8ab72c2-f413-46d1-b352-1da34c5ad5a2" />
+
 这个项目旨在让闲置的旧手机重获新生，将其改造成一个 24 小时实时数据监控面板。通过简洁的界面展示各类实时数据，让旧手机发挥余热，成为你的专属数据中心。
 
-最新更新
+
+## 最近更新
 - 加入黑夜模式
 - 添加上证指数大盘
 - 优化UI
-
-更新
-- 
-
+- 加入校巴
 
 
 ## 🌟 功能特点

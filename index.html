@@ -36,16 +36,15 @@
         .grid-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 12px;
+            gap: 8px;
         }
 
         .card {
             background: var(--card-bg);
             border-radius: 16px;
-            padding: 12px;
+            padding: 10px;
             box-shadow: 0 2px 10px var(--shadow);
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         .card.full-width {
@@ -59,17 +58,22 @@
             font-weight: 500;
         }
 
+        .time-container {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin: 4px 0;
+        }
+
         .time {
             font-size: 28px;
             font-weight: bold;
             color: var(--accent);
-            margin: 4px 0;
         }
 
         .date {
             font-size: 14px;
             color: var(--text-secondary);
-            margin-bottom: 8px;
         }
 
         .weather-main {
@@ -308,7 +312,7 @@
         .info-container {
             display: flex;
             justify-content: space-between;
-            gap: 24px;
+            gap: 12px;
         }
 
         .bili-section {
@@ -406,8 +410,10 @@
         <!-- 时间卡片 -->
         <div class="card">
             <div class="title">当前时间</div>
-            <div class="time" id="time">15:25:43</div>
-            <div class="date" id="date">3月19日 星期二</div>
+            <div class="time-container">
+                <div class="time" id="time">15:25:43</div>
+                <div class="date" id="date">3月19日 星期二</div>
+            </div>
             <div class="theme-switch">
                 <label class="switch">
                     <input type="checkbox" id="themeToggle">
@@ -487,12 +493,12 @@
                         </div>
                         <div class="bus-row">
                             <div class="bus-item next">
-                                <span class="bus-status">即将发车</span>
+                                <span class="bus-status">未发车</span>
                                 <span id="nextBus1" class="bus-time">08:00</span>
                                 <span id="nextBusTime1" class="time-info">10分钟</span>
                             </div>
                             <div class="bus-item next">
-                                <span class="bus-status">即将发车</span>
+                                <span class="bus-status">未发车</span>
                                 <span id="nextBus2" class="bus-time">08:15</span>
                                 <span id="nextBusTime2" class="time-info">xx分钟</span>
                             </div>

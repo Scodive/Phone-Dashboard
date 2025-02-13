@@ -296,6 +296,73 @@
             font-size: 12px;
             color: var(--text-secondary);
         }
+
+        .info-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .bili-section, .bus-section {
+            flex: 1;
+        }
+
+        .bus-times {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .bus-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px;
+            border-radius: 6px;
+            background: var(--card-bg);
+        }
+
+        .bus-status {
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .past .bus-status {
+            background: #f5f5f5;
+            color: #999;
+        }
+
+        .next .bus-status {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+
+        .future .bus-status {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+
+        [data-theme="dark"] .past .bus-status {
+            background: #262626;
+            color: #999;
+        }
+
+        [data-theme="dark"] .next .bus-status {
+            background: #111d2c;
+            color: #40a9ff;
+        }
+
+        [data-theme="dark"] .future .bus-status {
+            background: #162312;
+            color: #73d13d;
+        }
+
+        #lastBusTime, #nextBusTime, #futureBusTime {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
@@ -352,13 +419,39 @@
 
         <!-- 修改B站视频卡片 -->
         <div class="card full-width">
-            <div class="title">B站视频信息</div>
-            <div class="bili-stats">
-                <span class="bili-title" id="videoTitle">亚洲最美海景校园</span>
-                <div class="bili-numbers">
-                    <span id="viewCount">播放: 24609</span>
-                    <span id="likeCount">点赞: 681</span>
-                    <span id="replyCount">评论: 88</span>
+            <div class="info-container">
+                <!-- B站信息 -->
+                <div class="bili-section">
+                    <div class="title">B站数据</div>
+                    <div class="bili-stats">
+                        <span class="bili-title" id="videoTitle">亚洲最美海景校园</span>
+                        <div class="bili-numbers">
+                            <span id="viewCount">播放: 24609</span>
+                            <span id="likeCount">点赞: 681</span>
+                            <span id="replyCount">评论: 88</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- 校巴信息 -->
+                <div class="bus-section">
+                    <div class="title">校巴时刻</div>
+                    <div class="bus-times">
+                        <div class="bus-item past">
+                            <span class="bus-status">已发车</span>
+                            <span id="lastBus">07:30</span>
+                            <span id="lastBusTime">10分钟前</span>
+                        </div>
+                        <div class="bus-item next">
+                            <span class="bus-status">下一班</span>
+                            <span id="nextBus">07:45</span>
+                            <span id="nextBusTime">还有5分钟</span>
+                        </div>
+                        <div class="bus-item future">
+                            <span class="bus-status">后一班</span>
+                            <span id="futureBus">08:00</span>
+                            <span id="futureBusTime">还有20分钟</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -521,6 +614,81 @@
 
         // 页面加载时检查是否需要自动切换
         autoThemeSwitch();
+
+        // 校巴时刻表数据
+        const busSchedule = [
+            "07:00", "07:05", "07:10", "07:15", "07:20", "07:25",
+            "07:30", "07:35", "07:40", "07:45", "07:50", "07:55",
+            "08:00", "08:05", "08:10", "08:15", "08:20", "08:25",
+            "08:30", "08:35", "08:40", "08:45", "08:50", "08:55",
+            "09:00", "09:05", "09:10", "09:15", "09:20", "09:25",
+            "09:30", "09:35", "09:40", "09:50", "10:00", "10:10", 
+            "10:20", "10:30", "10:40", "10:50", "11:00", "11:20",
+            "11:35", "11:45", "11:50", "12:00", "12:10", "12:20",
+            "12:30", "12:40", "12:50", "12:55", "13:00", "13:10",
+            "13:20", "13:30", "13:40", "13:50", "14:00", "14:10",
+            "14:20", "14:30", "14:40", "14:50", "15:00", "15:10",
+            "15:20", "15:30", "15:40", "15:50", "16:00", "16:10",
+            "16:20", "16:30", "16:40", "16:50", "17:00", "17:10",
+            "17:15", "17:25", "17:30", "17:35", "17:40", "17:45",
+            "17:50", "17:55", "18:00", "18:05", "18:10", "18:15",
+            "18:20", "18:30", "18:40", "18:50", "19:00", "19:10",
+            "19:20", "19:30", "19:40", "19:50", "20:00", "20:10",
+            "20:20", "20:30", "20:40", "20:50", "21:00", "21:10",
+            "21:20", "21:30", "21:40", "21:50", "22:00", "22:15",// ... 其他时间
+            "22:30", "22:45"
+        ];
+
+        // 更新校巴信息
+        function updateBusInfo() {
+            const now = new Date();
+            const currentTime = now.getHours() * 60 + now.getMinutes();
+            
+            // 转换时间字符串为分钟数
+            const timeToMinutes = (timeStr) => {
+                const [hours, minutes] = timeStr.split(':').map(Number);
+                return hours * 60 + minutes;
+            };
+
+            // 找到相关班次
+            let lastBus = null;
+            let nextBus = null;
+            let futureBus = null;
+
+            for (let i = 0; i < busSchedule.length; i++) {
+                const busTime = timeToMinutes(busSchedule[i]);
+                if (busTime <= currentTime) {
+                    lastBus = busSchedule[i];
+                } else {
+                    nextBus = busSchedule[i];
+                    futureBus = busSchedule[i + 1];
+                    break;
+                }
+            }
+
+            // 更新显示
+            if (lastBus) {
+                const lastBusMinutes = currentTime - timeToMinutes(lastBus);
+                document.getElementById('lastBus').textContent = lastBus;
+                document.getElementById('lastBusTime').textContent = `${lastBusMinutes}分钟前`;
+            }
+
+            if (nextBus) {
+                const nextBusMinutes = timeToMinutes(nextBus) - currentTime;
+                document.getElementById('nextBus').textContent = nextBus;
+                document.getElementById('nextBusTime').textContent = `还有${nextBusMinutes}分钟`;
+            }
+
+            if (futureBus) {
+                const futureBusMinutes = timeToMinutes(futureBus) - currentTime;
+                document.getElementById('futureBus').textContent = futureBus;
+                document.getElementById('futureBusTime').textContent = `还有${futureBusMinutes}分钟`;
+            }
+        }
+
+        // 每分钟更新一次校巴信息
+        updateBusInfo();
+        setInterval(updateBusInfo, 60 * 1000);
     </script>
 </body>
 </html> 

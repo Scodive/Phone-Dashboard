@@ -5,13 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>数据看板</title>
     <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --shadow: rgba(0,0,0,0.05);
+            --accent: #57068c;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --shadow: rgba(0,0,0,0.2);
+            --accent: #9c27b0;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
             margin: 0;
             padding: 16px;
-            background: #f8f9fa;
+            background: var(--bg-color);
             max-width: 667px;
             margin: 0 auto;
+            transition: background 0.3s ease;
         }
 
         .grid-container {
@@ -22,10 +41,10 @@
         }
 
         .card {
-            background: white;
+            background: var(--card-bg);
             border-radius: 16px;
             padding: 16px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px var(--shadow);
         }
 
         .card.full-width {
@@ -33,7 +52,7 @@
         }
 
         .title {
-            color: #666;
+            color: var(--text-secondary);
             font-size: 12px;
             margin-bottom: 6px;
             font-weight: 500;
@@ -42,7 +61,7 @@
         .time {
             font-size: 32px;
             font-weight: bold;
-            color: #57068c;
+            color: var(--accent);
         }
 
         .weather-main {
@@ -54,13 +73,13 @@
         .temp {
             font-size: 28px;
             font-weight: bold;
-            color: #57068c;
+            color: var(--accent);
         }
 
         .weather-details {
             margin-top: 8px;
             font-size: 13px;
-            color: #666;
+            color: var(--text-secondary);
             display: flex;
             justify-content: space-between;
         }
@@ -100,15 +119,32 @@
         .bili-title {
             font-size: 16px;
             font-weight: 500;
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 8px;
         }
 
         .bili-stats {
             display: flex;
+            justify-content: space-between;
+            align-items: center;
             gap: 16px;
-            color: #666;
             font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .bili-title {
+            font-size: 14px;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 40%;  /* 控制标题宽度 */
+        }
+
+        .bili-numbers {
+            display: flex;
+            gap: 12px;
+            white-space: nowrap;
         }
 
         .social-container {
@@ -132,13 +168,13 @@
             flex-direction: column;
             gap: 4px;
             font-size: 14px;
-            color: #666;
+            color: var(--text-secondary);
         }
 
         .bili-title {
             font-size: 15px;
             font-weight: 500;
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 6px;
             white-space: nowrap;
             overflow: hidden;
@@ -156,7 +192,7 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            color: #666;
+            color: var(--text-secondary);
             font-size: 14px;
         }
 
@@ -176,7 +212,7 @@
         .bili-title {
             font-size: 15px;
             font-weight: 500;
-            color: #333;
+            color: var(--text-primary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -185,11 +221,69 @@
         .bili-stats {
             display: flex;
             gap: 16px;
-            color: #666;
+            color: var(--text-secondary);
             font-size: 14px;
         }
 
         /* 移除之前的抖音相关样式 */
+
+        /* 主题切换按钮样式 */
+        .theme-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        .mode-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
     </style>
 </head>
 <body>
@@ -197,7 +291,14 @@
         <!-- 时间卡片 -->
         <div class="card">
             <div class="title">当前时间</div>
-            <div class="time" id="time">15:08:43</div>
+            <div class="time" id="time">15:25:43</div>
+            <div class="theme-switch">
+                <label class="switch">
+                    <input type="checkbox" id="themeToggle">
+                    <span class="slider"></span>
+                </label>
+                <span class="mode-text" id="modeText">日间模式</span>
+            </div>
         </div>
 
         <!-- 天气卡片 -->
@@ -240,9 +341,9 @@
         <!-- 修改B站视频卡片 -->
         <div class="card full-width">
             <div class="title">B站视频信息</div>
-            <div class="bili-content">
-                <div class="bili-title" id="videoTitle">亚洲最美海景校园</div>
-                <div class="bili-stats">
+            <div class="bili-stats">
+                <span class="bili-title" id="videoTitle">亚洲最美海景校园</span>
+                <div class="bili-numbers">
                     <span id="viewCount">播放: 24609</span>
                     <span id="likeCount">点赞: 681</span>
                     <span id="replyCount">评论: 88</span>
@@ -364,6 +465,44 @@
         // 初始加载并每5分钟更新一次
         updateGithubStats();
         setInterval(updateGithubStats, 60 * 60 * 1000);
+
+        // 添加主题切换功能
+        const themeToggle = document.getElementById('themeToggle');
+        const modeText = document.getElementById('modeText');
+
+        // 检查本地存储的主题设置
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeToggle.checked = true;
+            modeText.textContent = '夜间模式';
+        }
+
+        // 主题切换事件
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                modeText.textContent = '夜间模式';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+                modeText.textContent = '日间模式';
+            }
+        });
+
+        // 自动切换到夜间模式（晚上10点到早上6点）
+        function autoThemeSwitch() {
+            const hour = new Date().getHours();
+            if (hour >= 22 || hour < 6) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeToggle.checked = true;
+                modeText.textContent = '夜间模式';
+            }
+        }
+
+        // 页面加载时检查是否需要自动切换
+        autoThemeSwitch();
     </script>
 </body>
 </html> 

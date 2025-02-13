@@ -34,8 +34,8 @@
 
         .title {
             color: #666;
-            font-size: 14px;
-            margin-bottom: 8px;
+            font-size: 12px;
+            margin-bottom: 6px;
             font-weight: 500;
         }
 
@@ -61,8 +61,8 @@
             margin-top: 8px;
             font-size: 13px;
             color: #666;
-            display: grid;
-            gap: 2px;
+            display: flex;
+            justify-content: space-between;
         }
 
         .stats-container {
@@ -144,6 +144,52 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
+        /* GitHub 统计样式 */
+        .github-stats {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .star-count {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .star-count svg {
+            width: 16px;
+            height: 16px;
+            fill: #fadb14;
+        }
+
+        /* 修改B站数据相关样式 */
+        .bili-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .bili-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .bili-stats {
+            display: flex;
+            gap: 16px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* 移除之前的抖音相关样式 */
     </style>
 </head>
 <body>
@@ -162,7 +208,7 @@
                 <div class="temp" id="temp">20°C</div>
             </div>
             <div class="weather-details">
-                <div>体感温度: <span id="feels-like">20°C</span></div>
+                <div>体感: <span id="feels-like">20°C</span></div>
                 <div>湿度: <span id="humidity">63%</span></div>
             </div>
         </div>
@@ -170,10 +216,18 @@
         <!-- 数据统计卡片 -->
         <div class="card full-width">
             <div class="stats-container">
-                <div>
-                    <div class="title">GitHub 访问量</div>
-                    <img src="https://api.visitorbadge.io/api/VisitorHit?user=Scodive&repo=Scodive&countColor=%57068c" 
-                         alt="访问统计">
+                <div class="github-stats">
+                    <div>
+                        <div class="title">GitHub 访问量</div>
+                        <img src="https://api.visitorbadge.io/api/VisitorHit?user=Scodive&repo=Scodive&countColor=%57068c" 
+                             alt="访问统计">
+                    </div>
+                    <div class="star-count">
+                        <svg viewBox="0 0 16 16">
+                            <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25z"/>
+                        </svg>
+                        <span id="starCount">--</span>
+                    </div>
                 </div>
                 <div class="stock">
                     <div class="title">上证指数</div>
@@ -183,27 +237,15 @@
             </div>
         </div>
 
-        <!-- B站视频卡片 -->
+        <!-- 修改B站视频卡片 -->
         <div class="card full-width">
-            <div class="title">社交媒体数据</div>
-            <div class="social-container">
-                <!-- B站数据 -->
-                <div class="social-item">
-                    <div class="platform-title">B站视频</div>
-                    <div class="bili-title" id="videoTitle">亚洲最美海景校园</div>
-                    <div class="bili-stats">
-                        <span id="viewCount">播放: 24609</span>
-                        <span id="likeCount">点赞: 681</span>
-                        <span id="replyCount">评论: 0</span>
-                    </div>
-                </div>
-                <!-- 抖音数据 -->
-                <div class="social-item">
-                    <div class="platform-title">抖音</div>
-                    <div class="douyin-stats">
-                        <div>获赞: <span id="douyinLikes">--</span></div>
-                        <div>粉丝: <span id="douyinFollowers">--</span></div>
-                    </div>
+            <div class="title">B站视频信息</div>
+            <div class="bili-content">
+                <div class="bili-title" id="videoTitle">亚洲最美海景校园</div>
+                <div class="bili-stats">
+                    <span id="viewCount">播放: 24609</span>
+                    <span id="likeCount">点赞: 681</span>
+                    <span id="replyCount">评论: 88</span>
                 </div>
             </div>
         </div>
@@ -219,20 +261,20 @@
         setInterval(updateTime, 1000);
         updateTime();
 
-        // 更新B站数据的函数
+        // 修改B站数据更新函数
         async function getBiliPlayCount() {
             try {
-                const bvid = 'BV1TpNNewE4W'; // 你的视频BV号
+                const bvid = '你的视频BV号';
                 const response = await fetch(`/api/bilibili?bvid=${bvid}`);
                 const data = await response.json();
                 
                 document.getElementById('videoTitle').textContent = data.title;
                 document.getElementById('viewCount').textContent = 
-                    `播放: ${formatNumber(data.view)}`;
+                    `播放: ${data.view.toLocaleString('zh-CN')}`;
                 document.getElementById('likeCount').textContent = 
-                    `点赞: ${formatNumber(data.like)}`;
+                    `点赞: ${data.like.toLocaleString('zh-CN')}`;
                 document.getElementById('replyCount').textContent = 
-                    `评论: ${formatNumber(data.reply)}`;
+                    `评论: ${data.reply.toLocaleString('zh-CN')}`;
             } catch (error) {
                 console.error('获取视频信息失败:', error);
             }
@@ -308,32 +350,20 @@
         // 设置30秒更新一次
         setInterval(updateStockPrice, 30 * 1000);
 
-        // 添加抖音数据更新函数
-        async function updateDouyinStats() {
+        // 添加到 script 部分
+        async function updateGithubStats() {
             try {
-                const response = await fetch('/api/douyin');
+                const response = await fetch('/api/github');
                 const data = await response.json();
-                
-                document.getElementById('douyinLikes').textContent = 
-                    formatNumber(data.likes);
-                document.getElementById('douyinFollowers').textContent = 
-                    formatNumber(data.followers);
+                document.getElementById('starCount').textContent = data.stars;
             } catch (error) {
-                console.error('获取抖音数据失败:', error);
+                console.error('获取 GitHub 数据失败:', error);
             }
         }
 
-        // 格式化数字函数（将大数字转换为 1.2w 这样的格式）
-        function formatNumber(num) {
-            if (num >= 10000) {
-                return (num / 10000).toFixed(1) + 'w';
-            }
-            return num.toString();
-        }
-
-        // 设置定时更新
-        updateDouyinStats();
-        setInterval(updateDouyinStats, 60 * 1000); // 每分钟更新一次抖音数据
+        // 初始加载并每5分钟更新一次
+        updateGithubStats();
+        setInterval(updateGithubStats, 60 * 60 * 1000);
     </script>
 </body>
 </html> 

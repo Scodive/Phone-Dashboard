@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET');
 
   try {
-    const bvid = req.query.bvid || 'BV1TpNNewE4W'; // 设置默认值或从查询参数获取
+    const bvid = 'BV1TpNNewE4W'; // 设置默认值或从查询参数获取
     const response = await fetch(`https://api.bilibili.com/x/web-interface/view?bvid=${bvid}`);
     const data = await response.json();
     

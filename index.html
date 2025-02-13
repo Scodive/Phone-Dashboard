@@ -343,50 +343,53 @@
         }
 
         .bus-section {
-            flex: 1.2;
+            flex: 1.2;  /* 给校巴部分多一点空间 */
         }
 
         .bus-times {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+            padding: 0 4px;  /* 整体左边距 */
         }
 
         .bus-row {
             display: flex;
             gap: 12px;
-            padding-left: 0;  /* 移除左边距 */
+            margin-bottom: 8px;  /* 行间距 */
+        }
+
+        .bus-row:last-child {
+            margin-bottom: 0;
         }
 
         .bus-item {
             flex: 1;
-            display: flex;
-            align-items: center;
             padding: 8px 12px;
             border-radius: 6px;
-            background: var(--card-bg);
-            margin-left: 0;  /* 移除左边距 */
+        }
+
+        .bus-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-left: 4px;  /* 内容左对齐 */
         }
 
         .bus-status {
             font-size: 12px;
             padding: 2px 6px;
             border-radius: 4px;
-            min-width: 56px;  /* 固定状态标签宽度 */
+            min-width: 56px;  /* 固定状态宽度 */
             text-align: center;
         }
 
         .bus-time {
+            font-size: 15px;
             font-weight: 500;
-            color: var(--text-primary);
-            margin-left: 8px;  /* 调整时间与状态的间距 */
-            min-width: 50px;  /* 固定时间宽度 */
+            min-width: 45px;  /* 固定时间宽度 */
         }
 
         .time-info {
             font-size: 13px;
             color: var(--text-secondary);
-            margin-left: auto;  /* 将时间信息推到右边 */
         }
 
         .past .bus-status {
@@ -486,26 +489,34 @@
                     <div class="bus-times">
                         <div class="bus-row">
                             <div class="bus-item past">
-                                <span class="bus-status">已发车</span>
-                                <span id="lastBus1" class="bus-time">07:30</span>
-                                <span id="lastBusTime1" class="time-info">10分钟前</span>
+                                <div class="bus-info">
+                                    <span class="bus-status">已发车</span>
+                                    <span class="bus-time" id="lastBus1">17:30</span>
+                                    <span class="time-info" id="lastBusTime1">8分钟前</span>
+                                </div>
                             </div>
                             <div class="bus-item past">
-                                <span class="bus-status">已发车</span>
-                                <span id="lastBus2" class="bus-time">07:45</span>
-                                <span id="lastBusTime2" class="time-info">5分钟前</span>
+                                <div class="bus-info">
+                                    <span class="bus-status">已发车</span>
+                                    <span class="bus-time" id="lastBus2">17:35</span>
+                                    <span class="time-info" id="lastBusTime2">3分钟前</span>
+                                </div>
                             </div>
                         </div>
                         <div class="bus-row">
                             <div class="bus-item next">
-                                <span class="bus-status">未发车</span>
-                                <span id="nextBus1" class="bus-time">08:00</span>
-                                <span id="nextBusTime1" class="time-info">10分钟</span>
+                                <div class="bus-info">
+                                    <span class="bus-status">即将发车</span>
+                                    <span class="bus-time" id="nextBus1">17:40</span>
+                                    <span class="time-info" id="nextBusTime1">2分钟后</span>
+                                </div>
                             </div>
                             <div class="bus-item next">
-                                <span class="bus-status">未发车</span>
-                                <span id="nextBus2" class="bus-time">08:15</span>
-                                <span id="nextBusTime2" class="time-info">xx分钟</span>
+                                <div class="bus-info">
+                                    <span class="bus-status">即将发车</span>
+                                    <span class="bus-time" id="nextBus2">17:45</span>
+                                    <span class="time-info" id="nextBusTime2">7分钟后</span>
+                                </div>
                             </div>
                         </div>
                     </div>

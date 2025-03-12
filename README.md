@@ -1,4 +1,4 @@
-# 旧手机数据看板 (Old Phone Dashboard)
+# 旧手机数据看板 (Old Phone Dashboard) <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FScodive%2FPhone-Dashboard&count_bg=%232B8DD9&title_bg=%237834C6&icon=github.svg&icon_color=%23E7E7E7&title=Page+Viewers&edge_flat=false"/> <img alt="GitHub repo stars" src="https://img.shields.io/github/stars/Scodive/Phone-Dashboard">
 
 <img width="756" alt="image" src="https://github.com/user-attachments/assets/e8ab72c2-f413-46d1-b352-1da34c5ad5a2" />
 

@@ -403,10 +403,85 @@
             background: #111d2c;
             color: #40a9ff;
         }
+
+        /* 网络状态块样式 */
+.net-status {
+    margin-top: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background-color: #f0f2f5;
+    color: #333;
+    font-size: 14px;
+    box-shadow: 0 1px 5px var(--shadow);
+    transition: all 0.3s ease;
+}
+
+/* 暗黑模式下的配色 */
+[data-theme="dark"] .net-status {
+    background-color: #2c2c2c;
+    color: #ccc;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+}
+
     </style>
 </head>
 <body>
     <div class="grid-container">
+        
+        <!-- VPN 网络状态卡片模块 -->
+    <div class="card full-width">
+        <div class="title">VPN 网络状态</div>
+        <div id="vpnStatusText" class="vpn-status-text">网络状态检测中...</div>
+    </div>
+    
+    <style>
+        .vpn-status-text {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+            padding: 8px 0;
+            transition: color 0.3s ease;
+        }
+    
+        [data-theme="dark"] .vpn-status-text {
+            color: var(--text-secondary);
+        }
+    </style>
+    
+    <script>
+        async function checkConnectivity() {
+            const statusEl = document.getElementById("vpnStatusText");
+    
+            let internetOK = false;
+            let vpnOK = false;
+    
+            // 尝试访问百度（判断是否联网）
+            try {
+                await fetch("https://www.baidu.com", { mode: "no-cors" });
+                internetOK = true;
+            } catch (e) {}
+    
+            // 尝试访问 Google（判断 VPN）
+            try {
+                await fetch("https://www.google.com", { mode: "no-cors" });
+                vpnOK = true;
+            } catch (e) {}
+    
+            // 设置状态内容
+            if (!internetOK) {
+                statusEl.textContent = "🔴 无法连接互联网";
+            } else if (internetOK && !vpnOK) {
+                statusEl.textContent = "🟡 已联网，但未连接 VPN";
+            } else if (internetOK && vpnOK) {
+                statusEl.textContent = "🟢 VPN已连接，网络正常";
+            }
+        }
+    
+        // 初始化检测 + 定时刷新
+        checkConnectivity();
+        setInterval(checkConnectivity, 30000);
+    </script>
+  
         <!-- 时间卡片 -->
         <div class="card">
             <div class="title">当前时间</div>
@@ -426,6 +501,8 @@
         <!-- 天气卡片 -->
         <div class="card">
             <div class="title">天气</div>
+            <!-- <div id="city" style="font-size: 14px; color: var(--text-secondary); margin-bottom: 4px;">📍 获取位置中...</div> -->
+
             <div class="weather-main">
                 <img id="weather-icon" src="" alt="天气" width="50">
                 <div class="temp" id="temp">20°C</div>
@@ -435,9 +512,36 @@
                 <div>湿度: <span id="humidity">63%</span></div>
             </div>
         </div>
-
+<!-- 项目进度卡片 -->
+<div class="card full-width">
+    <div class="title">项目进度概览</div>
+    <div class="project-list">
+      <div class="project-item">
+        <span class="project-name">智慧商圈</span>
+        <div class="progress-bar">
+          <div class="progress" style="width: 70%"></div>
+        </div>
+        <span class="progress-percent">70%</span>
+      </div>
+      <div class="project-item">
+        <span class="project-name">监控平台</span>
+        <div class="progress-bar">
+          <div class="progress" style="width: 45%"></div>
+        </div>
+        <span class="progress-percent">45%</span>
+      </div>
+      <div class="project-item">
+        <span class="project-name">旧改申报</span>
+        <div class="progress-bar">
+          <div class="progress" style="width: 100%"></div>
+        </div>
+        <span class="progress-percent">✅ 完成</span>
+      </div>
+    </div>
+  </div>
+  
         <!-- 数据统计卡片 -->
-        <div class="card full-width">
+        <!-- <div class="card full-width">
             <div class="stats-container">
                 <div class="github-stats">
                     <div>
@@ -458,7 +562,7 @@
                     <span class="stock-change up" id="stockChange">+1.2%</span>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <!-- 修改B站视频卡片 -->
         <div class="card full-width">
@@ -507,6 +611,102 @@
                 </div>
             </div>
         </div>
+  
+  <style>
+    .vpn-status-text {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--text-primary);
+        padding: 8px 0;
+        transition: color 0.3s ease;
+    }
+  
+    [data-theme="dark"] .vpn-status-text {
+        color: var(--text-secondary);
+    }
+    .project-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.project-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.project-name {
+  flex: 0 0 80px;
+  font-size: 14px;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 8px;
+  background: #eee;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar .progress {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progress-percent {
+  flex: 0 0 50px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+[data-theme="dark"] .progress-bar {
+  background: #444;
+}
+
+  </style>
+  
+  <script>
+    async function checkConnectivity() {
+        const statusEl = document.getElementById("vpnStatusText");
+  
+        let internetOK = false;
+        let vpnOK = false;
+  
+        // 尝试访问百度（判断是否联网）
+        try {
+            await fetch("https://www.baidu.com", { mode: "no-cors" });
+            internetOK = true;
+        } catch (e) {}
+  
+        // 尝试访问 Google（判断 VPN）
+        try {
+            await fetch("https://www.google.com", { mode: "no-cors" });
+            vpnOK = true;
+        } catch (e) {}
+  
+        // 显示状态文本
+        if (!internetOK) {
+            statusEl.textContent = "🔴 无法连接互联网";
+        } else if (internetOK && !vpnOK) {
+            statusEl.textContent = "🟡 已联网，但未连接 VPN";
+        } else if (internetOK && vpnOK) {
+            statusEl.textContent = "🟢 VPN已连接，网络正常";
+        }
+    }
+  
+    // 初始化检测 & 定时刷新
+    checkConnectivity();
+    setInterval(checkConnectivity, 30000);
+  </script>
+  
     </div>
 
     <script>
@@ -559,41 +759,53 @@
         getBiliPlayCount();  // 初始加载
         setInterval(getBiliPlayCount, 5 * 60 * 1000);  // 每分钟更新B站数据
 
-        // 天气获取函数
-        async function getWeather() {
-            try {
-                const API_KEY = '489af8f8bd77a20ae9dea8aafbc468b9';
-                const lat = 27.99297;
-                const lon = 120.682168;
-                const response = await fetch(
-                    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
-                );
-                const data = await response.json();
-                
-                // 更新温度
-                document.getElementById('temp').textContent = 
-                    `${Math.round(data.main.temp)}°C`;
-                
-                // 更新体感温度
-                document.getElementById('feels-like').textContent = 
-                    `${Math.round(data.main.feels_like)}°C`;
-                
-                // 更新湿度
-                document.getElementById('humidity').textContent = 
-                    `${data.main.humidity}%`;
-                
-                // 更新天气图标
-                const iconCode = data.weather[0].icon;
-                const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
-                document.getElementById('weather-icon').src = iconUrl;
-            } catch (error) {
-                console.error('获取天气信息失败:', error);
-            }
+        // 天气获取函数（增加自动定位和城市名）
+async function getWeather() {
+    const API_KEY = '489af8f8bd77a20ae9dea8aafbc468b9';
+    const cityEl = document.getElementById("city");
+
+    try {
+        // 1. 自动定位（基于 IP，无需授权）
+        const locRes = await fetch("https://pro.ip-api.com/json/?fields=status,country,regionName,city,lat,lon&key=demo");
+        const locData = await locRes.json();
+
+        if (locData.status !== "success") {
+            throw new Error("IP定位失败");
         }
 
-        // 初始加载天气并设置30分钟自动刷新
-        getWeather();
-        setInterval(getWeather, 30 * 60 * 1000);
+        const { city, lat, lon } = locData;
+        cityEl.textContent = `📍 ${city}`;
+
+        // 2. 获取天气数据
+        const response = await fetch(
+            `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
+        );
+        const data = await response.json();
+
+        // 更新温度
+        document.getElementById('temp').textContent = `${Math.round(data.main.temp)}°C`;
+
+        // 更新体感温度
+        document.getElementById('feels-like').textContent = `${Math.round(data.main.feels_like)}°C`;
+
+        // 更新湿度
+        document.getElementById('humidity').textContent = `${data.main.humidity}%`;
+
+        // 更新天气图标
+        const iconCode = data.weather[0].icon;
+        const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+        document.getElementById('weather-icon').src = iconUrl;
+
+    } catch (error) {
+        console.error('获取天气信息失败:', error);
+        cityEl.textContent = "📍 获取位置失败";
+    }
+}
+
+// 初始加载天气并设置30分钟自动刷新
+getWeather();
+setInterval(getWeather, 30 * 60 * 1000);
+
 
         // 修改股票更新相关的代码部分
         async function updateStockPrice() {
@@ -762,7 +974,6 @@
                 }
             });
         }
-
         // 初始更新并设置30秒刷新
         updateBusInfo();
         setInterval(updateBusInfo, 30 * 1000);
